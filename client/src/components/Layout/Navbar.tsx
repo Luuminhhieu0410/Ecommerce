@@ -3,18 +3,18 @@ import {Link} from "react-router-dom";
 
 const Navbar = () => {
     return (
-        <div>
-            <ul className="flex">
-                {navItems.map((item, index) => {
-                    return (
-                        <li key={index}>
-                            <Link to={item.url} className="text-black font-[500] px-6 cursor-pointer">
-                                {item.title}
-                            </Link>
-                        </li>
-                    )
-                })}
+        <div className="w-[50%]">
+            <ul className="flex justify-between items-center text-xs font-normal  lg:text-xs xl:text-sm ">
+                {navItems.map((item, index) => (
+                    <li key={index}>
+                        <Link to={item.url} className="cursor-pointer">
+                            {item.title}
+                        </Link>
+                    </li>
+                ))}
             </ul>
+
+
         </div>
     );
 };

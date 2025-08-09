@@ -7,14 +7,19 @@ import {Input} from 'antd';
 const Header = () => {
     return (
         <div className="flex justify-center items-center px-[12px]" style={{background: "#fafafa"}}>
-            <div className="container flex flex-row items-center justify-between h-[74px]">
-                <Link to={"/"}>
+            <div className="xl:container lg:container flex items-center justify-between h-[74px]">
+                <Link to={"/"} className="w-[15%] flex items-center justify-center" >
                     <img src={logo} alt="Logo"/>
                 </Link>
+
                 <Navbar/>
-                <div className="flex gap-3">
-                    <Input size="large" placeholder="Tìm kiếm sản phẩm..." prefix={<SearchOutlined/>}/>
-                    <div className="action-header flex justify-between items-center">
+
+                <div className="flex items-center justify-around w-[30%] ">
+                    <div className="h-full w-[80%] border rounded-lg border-solid border-[#d9d9d9] flex">
+                        <div className=" mx-2 w-[10%] flex justify-center items-center"><SearchOutlined style={{color:"grey", fontSize:"18px"}} /></div>
+                        <input type="text" placeholder="Tìm kiếm sản phẩm..." className="h-[40px] w-full focus:outline-none  "/>
+                    </div>
+                    <div className=" action-header flex justify-center items-center">
                         <div className="account-header mr-2">
                             <div className="account-icon">
                                 <svg width="16" height="20" viewBox="0 0 16 20" fill="none"
