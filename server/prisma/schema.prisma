@@ -1,0 +1,401 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model addresses {
+  id            Int       @id @default(autoincrement())
+  user_id       Int?
+  receiver_name String?   @db.VarChar(255)
+  phone         String?   @db.VarChar(20)
+  street        String?   @db.VarChar(255)
+  ward          String?   @db.VarChar(255)
+  district      String?   @db.VarChar(255)
+  province      String?   @db.VarChar(255)
+  is_default    Boolean?  @default(false)
+  created_at    DateTime? @default(now()) @db.DateTime(0)
+  users         users?    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "addresses_ibfk_1")
+  orders        orders[]
+
+  @@index([user_id], map: "user_id")
+}
+
+model admins {
+  id            Int          @id @default(autoincrement())
+  email         String       @unique(map: "email") @db.VarChar(255)
+  password_hash String       @db.VarChar(255)
+  role          admins_role? @default(staff)
+  created_at    DateTime?    @default(now()) @db.DateTime(0)
+}
+
+model blog_authors {
+  id         Int          @id @default(autoincrement())
+  name       String       @db.VarChar(255)
+  avatar_url String?      @db.VarChar(255)
+  bio        String?      @db.Text
+  blog_posts blog_posts[]
+}
+
+model blog_blocks {
+  id         Int        @id @default(autoincrement())
+  post_id    Int
+  block_type String     @db.VarChar(100)
+  position   Int
+  props      Json?
+  created_at DateTime?  @default(now()) @db.DateTime(0)
+  blog_posts blog_posts @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "blog_blocks_ibfk_1")
+
+  @@index([post_id], map: "post_id")
+}
+
+model blog_post_tags {
+  post_id    Int
+  tag_id     Int
+  blog_posts blog_posts @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "blog_post_tags_ibfk_1")
+  blog_tags  blog_tags  @relation(fields: [tag_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "blog_post_tags_ibfk_2")
+
+  @@id([post_id, tag_id])
+  @@index([tag_id], map: "tag_id")
+}
+
+model blog_posts {
+  id              Int                @id @default(autoincrement())
+  title           String             @db.VarChar(255)
+  slug            String             @unique(map: "slug") @db.VarChar(255)
+  cover_image     String?            @db.VarChar(255)
+  excerpt         String?            @db.Text
+  seo_title       String?            @db.VarChar(255)
+  seo_description String?            @db.Text
+  status          blog_posts_status? @default(draft)
+  author_id       Int?
+  published_at    DateTime?          @db.DateTime(0)
+  created_at      DateTime?          @default(now()) @db.DateTime(0)
+  updated_at      DateTime?          @default(now()) @db.DateTime(0)
+  blog_blocks     blog_blocks[]
+  blog_post_tags  blog_post_tags[]
+  blog_authors    blog_authors?      @relation(fields: [author_id], references: [id], onUpdate: NoAction, map: "blog_posts_ibfk_1")
+  blog_views      blog_views[]
+
+  @@index([author_id], map: "author_id")
+}
+
+model blog_subscribers {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique(map: "email") @db.VarChar(255)
+  subscribed_at DateTime? @default(now()) @db.DateTime(0)
+}
+
+model blog_tags {
+  id             Int              @id @default(autoincrement())
+  name           String           @db.VarChar(100)
+  slug           String           @unique(map: "slug") @db.VarChar(100)
+  blog_post_tags blog_post_tags[]
+}
+
+model blog_templates {
+  id         Int       @id @default(autoincrement())
+  name       String?   @db.VarChar(100)
+  blocks     Json?
+  created_at DateTime? @default(now()) @db.DateTime(0)
+}
+
+model blog_views {
+  id         Int        @id @default(autoincrement())
+  post_id    Int
+  ip_address String?    @db.VarChar(45)
+  user_agent String?    @db.Text
+  created_at DateTime?  @default(now()) @db.DateTime(0)
+  blog_posts blog_posts @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "blog_views_ibfk_1")
+
+  @@index([post_id], map: "post_id")
+}
+
+model cart_items {
+  id                 Int              @id @default(autoincrement())
+  cart_id            Int
+  product_variant_id Int
+  quantity           Int?             @default(1)
+  carts              carts            @relation(fields: [cart_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "cart_items_ibfk_1")
+  product_variants   product_variants @relation(fields: [product_variant_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "cart_items_ibfk_2")
+
+  @@index([cart_id], map: "cart_id")
+  @@index([product_variant_id], map: "product_variant_id")
+}
+
+model carts {
+  id         Int          @id @default(autoincrement())
+  user_id    Int?
+  created_at DateTime?    @default(now()) @db.DateTime(0)
+  cart_items cart_items[]
+  users      users?       @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "carts_ibfk_1")
+
+  @@index([user_id], map: "user_id")
+}
+
+model categories {
+  id               Int          @id @default(autoincrement())
+  name             String       @db.VarChar(255)
+  slug             String       @unique(map: "slug") @db.VarChar(255)
+  parent_id        Int?
+  created_at       DateTime?    @default(now()) @db.Timestamp(0)
+  updated_at       DateTime?    @default(now()) @db.Timestamp(0)
+  categories       categories?  @relation("categoriesTocategories", fields: [parent_id], references: [id], onUpdate: NoAction, map: "fk_categories_parent")
+  other_categories categories[] @relation("categoriesTocategories")
+  products         products[]
+
+  @@index([parent_id], map: "fk_categories_parent")
+}
+
+model order_items {
+  id                 Int              @id @default(autoincrement())
+  order_id           Int
+  product_variant_id Int
+  quantity           Int
+  unit_price         Decimal?         @db.Decimal(10, 2)
+  orders             orders           @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "order_items_ibfk_1")
+  product_variants   product_variants @relation(fields: [product_variant_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "order_items_ibfk_2")
+
+  @@index([order_id], map: "order_id")
+  @@index([product_variant_id], map: "product_variant_id")
+}
+
+model order_shipments {
+  id                 Int                     @id @default(autoincrement())
+  order_id           Int
+  shipping_method_id Int
+  tracking_code      String?                 @db.VarChar(255)
+  shipped_at         DateTime?               @db.DateTime(0)
+  delivered_at       DateTime?               @db.DateTime(0)
+  status             order_shipments_status? @default(pending)
+  orders             orders                  @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "order_shipments_ibfk_1")
+  shipping_methods   shipping_methods        @relation(fields: [shipping_method_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "order_shipments_ibfk_2")
+
+  @@index([order_id], map: "order_id")
+  @@index([shipping_method_id], map: "shipping_method_id")
+}
+
+model orders {
+  id              Int               @id @default(autoincrement())
+  user_id         Int?
+  address_id      Int?
+  voucher_id      Int?
+  status          orders_status?    @default(pending)
+  total_amount    Decimal?          @db.Decimal(10, 2)
+  discount        Decimal?          @default(0.00) @db.Decimal(10, 2)
+  shipping_fee    Decimal?          @default(0.00) @db.Decimal(10, 2)
+  note            String?           @db.Text
+  created_at      DateTime?         @default(now()) @db.DateTime(0)
+  order_items     order_items[]
+  order_shipments order_shipments[]
+  users           users?            @relation(fields: [user_id], references: [id], onUpdate: NoAction, map: "orders_ibfk_1")
+  addresses       addresses?        @relation(fields: [address_id], references: [id], onUpdate: NoAction, map: "orders_ibfk_2")
+  vouchers        vouchers?         @relation(fields: [voucher_id], references: [id], onUpdate: NoAction, map: "orders_ibfk_3")
+  payments        payments[]
+
+  @@index([address_id], map: "address_id")
+  @@index([user_id], map: "user_id")
+  @@index([voucher_id], map: "voucher_id")
+}
+
+model payments {
+  id             Int                     @id @default(autoincrement())
+  order_id       Int
+  payment_method payments_payment_method
+  status         payments_status?        @default(pending)
+  transaction_id String?                 @db.VarChar(255)
+  paid_at        DateTime?               @db.DateTime(0)
+  orders         orders                  @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "payments_ibfk_1")
+
+  @@index([order_id], map: "order_id")
+}
+
+model product_images {
+  id            Int      @id @default(autoincrement())
+  product_id    Int
+  image_url     String?  @db.VarChar(500)
+  is_thumbnail  Boolean? @default(false)
+  variant_color String?  @db.VarChar(100)
+  products      products @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_images_ibfk_1")
+
+  @@index([product_id], map: "product_id")
+}
+
+model product_option_values {
+  id                      Int                       @id @default(autoincrement())
+  product_option_id       Int
+  value                   String                    @db.VarChar(100)
+  product_options         product_options           @relation(fields: [product_option_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_option_values_ibfk_1")
+  product_variant_options product_variant_options[]
+
+  @@index([product_option_id], map: "product_option_id")
+}
+
+model product_options {
+  id                      Int                       @id @default(autoincrement())
+  product_id              Int
+  name                    String                    @db.VarChar(100)
+  position                Int?                      @default(1)
+  product_option_values   product_option_values[]
+  products                products                  @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_options_ibfk_1")
+  product_variant_options product_variant_options[]
+
+  @@index([product_id], map: "product_id")
+}
+
+model product_variant_options {
+  id                      Int                   @id @default(autoincrement())
+  product_variant_id      Int
+  product_option_id       Int
+  product_option_value_id Int
+  product_variants        product_variants      @relation(fields: [product_variant_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_variant_options_ibfk_1")
+  product_options         product_options       @relation(fields: [product_option_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_variant_options_ibfk_2")
+  product_option_values   product_option_values @relation(fields: [product_option_value_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_variant_options_ibfk_3")
+
+  @@index([product_option_id], map: "product_option_id")
+  @@index([product_option_value_id], map: "product_option_value_id")
+  @@index([product_variant_id], map: "product_variant_id")
+}
+
+model product_variants {
+  id                      Int                       @id @default(autoincrement())
+  product_id              Int
+  sku                     String?                   @unique(map: "sku") @db.VarChar(100)
+  price                   Decimal?                  @db.Decimal(10, 2)
+  stock                   Int?                      @default(0)
+  image_url               String?                   @db.VarChar(500)
+  created_at              DateTime?                 @default(now()) @db.DateTime(0)
+  cart_items              cart_items[]
+  order_items             order_items[]
+  product_variant_options product_variant_options[]
+  products                products                  @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "product_variants_ibfk_1")
+
+  @@index([product_id], map: "product_id")
+}
+
+model products {
+  id               Int                @id @default(autoincrement())
+  name             String             @db.VarChar(255)
+  slug             String?            @unique(map: "slug") @db.VarChar(255)
+  description      String?            @db.Text
+  category_id      Int?
+  brand            String?            @db.VarChar(255)
+  price            Decimal?           @db.Decimal(10, 2)
+  discount_price   Decimal?           @db.Decimal(10, 2)
+  is_active        Boolean?           @default(true)
+  created_at       DateTime?          @default(now()) @db.DateTime(0)
+  product_images   product_images[]
+  product_options  product_options[]
+  product_variants product_variants[]
+  categories       categories?        @relation(fields: [category_id], references: [id], onUpdate: NoAction, map: "products_ibfk_1")
+  reviews          reviews[]
+
+  @@index([category_id], map: "category_id")
+}
+
+model review_images {
+  id        Int     @id @default(autoincrement())
+  review_id Int
+  image_url String  @db.VarChar(255)
+  reviews   reviews @relation(fields: [review_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "review_images_ibfk_1")
+
+  @@index([review_id], map: "review_id")
+}
+
+model reviews {
+  id            Int             @id @default(autoincrement())
+  user_id       Int
+  product_id    Int
+  rating        Int?
+  content       String?         @db.Text
+  is_approved   Boolean?        @default(false)
+  created_at    DateTime?       @default(now()) @db.DateTime(0)
+  review_images review_images[]
+  users         users           @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_ibfk_1")
+  products      products        @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reviews_ibfk_2")
+
+  @@index([product_id], map: "product_id")
+  @@index([user_id], map: "user_id")
+}
+
+model shipping_methods {
+  id              Int               @id @default(autoincrement())
+  name            String            @db.VarChar(100)
+  provider        String?           @db.VarChar(100)
+  fee             Decimal?          @db.Decimal(10, 2)
+  estimated_time  String?           @db.VarChar(100)
+  order_shipments order_shipments[]
+}
+
+model users {
+  id            Int         @id @default(autoincrement())
+  email         String      @unique(map: "email") @db.VarChar(255)
+  password_hash String      @db.VarChar(255)
+  full_name     String?     @db.VarChar(255)
+  phone         String?     @db.VarChar(20)
+  is_verified   Boolean?    @default(false)
+  created_at    DateTime?   @default(now()) @db.DateTime(0)
+  addresses     addresses[]
+  carts         carts[]
+  orders        orders[]
+  reviews       reviews[]
+}
+
+model vouchers {
+  id              Int                    @id @default(autoincrement())
+  code            String?                @unique(map: "code") @db.VarChar(50)
+  discount_type   vouchers_discount_type
+  value           Decimal?               @db.Decimal(10, 2)
+  min_order_value Decimal?               @db.Decimal(10, 2)
+  quantity        Int?                   @default(0)
+  expires_at      DateTime?              @db.DateTime(0)
+  is_active       Boolean?               @default(true)
+  orders          orders[]
+}
+
+enum payments_payment_method {
+  cod
+  vnpay
+  momo
+  paypal
+}
+
+enum vouchers_discount_type {
+  percent
+  fixed
+}
+
+enum admins_role {
+  admin
+  staff
+}
+
+enum payments_status {
+  pending
+  success
+  failed
+}
+
+enum orders_status {
+  pending
+  confirmed
+  shipping
+  delivered
+  cancelled
+  refunded
+}
+
+enum order_shipments_status {
+  pending
+  shipped
+  delivered
+}
+
+enum blog_posts_status {
+  draft
+  published
+}
