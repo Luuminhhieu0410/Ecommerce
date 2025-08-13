@@ -278,21 +278,22 @@ model product_variants {
 }
 
 model products {
-  id               Int                @id @default(autoincrement())
-  name             String             @db.VarChar(255)
-  slug             String?            @unique(map: "slug") @db.VarChar(255)
-  description      String?            @db.Text
-  category_id      Int?
-  brand            String?            @db.VarChar(255)
-  price            Decimal?           @db.Decimal(10, 2)
-  discount_price   Decimal?           @db.Decimal(10, 2)
-  is_active        Boolean?           @default(true)
-  created_at       DateTime?          @default(now()) @db.DateTime(0)
-  product_images   product_images[]
-  product_options  product_options[]
-  product_variants product_variants[]
-  categories       categories?        @relation(fields: [category_id], references: [id], onUpdate: NoAction, map: "products_ibfk_1")
-  reviews          reviews[]
+  id                  Int                   @id @default(autoincrement())
+  name                String                @db.VarChar(255)
+  slug                String?               @unique(map: "slug") @db.VarChar(255)
+  description         String?               @db.Text
+  category_id         Int?
+  brand               String?               @db.VarChar(255)
+  price               Decimal?              @db.Decimal(10, 2)
+  discount_price      Decimal?              @db.Decimal(10, 2)
+  is_active           Boolean?              @default(true)
+  created_at          DateTime?             @default(now()) @db.DateTime(0)
+  collection_products collection_products[]
+  product_images      product_images[]
+  product_options     product_options[]
+  product_variants    product_variants[]
+  categories          categories?           @relation(fields: [category_id], references: [id], onUpdate: NoAction, map: "products_ibfk_1")
+  reviews             reviews[]
 
   @@index([category_id], map: "category_id")
 }
@@ -355,6 +356,27 @@ model vouchers {
   expires_at      DateTime?              @db.DateTime(0)
   is_active       Boolean?               @default(true)
   orders          orders[]
+}
+
+model collection_products {
+  collection_id Int
+  product_id    Int
+  collections   collections @relation(fields: [collection_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "collection_products_ibfk_1")
+  products      products    @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "collection_products_ibfk_2")
+
+  @@id([collection_id, product_id])
+  @@index([product_id], map: "product_id")
+}
+
+model collections {
+  id                  Int                   @id @default(autoincrement())
+  name                String                @db.VarChar(255)
+  slug                String                @unique(map: "slug") @db.VarChar(255)
+  description         String?               @db.Text
+  image               String?               @db.VarChar(255)
+  created_at          DateTime?             @default(now()) @db.Timestamp(0)
+  updated_at          DateTime?             @default(now()) @db.Timestamp(0)
+  collection_products collection_products[]
 }
 
 enum payments_payment_method {
