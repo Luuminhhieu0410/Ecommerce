@@ -1,0 +1,52 @@
+li.ant-menu-submenu {
+    border-bottom: 1px solid #66666633 !important;
+    border-top: 1px solid #66666633 !important;
+    margin-bottom: -1px !important;
+    margin-top: -1px !important;
+    border-radius: 0 !important;
+}
+
+li.ant-menu-submenu-inline li.ant-menu-submenu-open {
+    border-bottom: 1px solid #66666633 !important;
+    border-top: 1px solid #66666633 !important;
+    margin-bottom: -1px !important;
+    margin-top: -1px !important;
+    border-radius: 0 !important;
+}
+
+.tab-title::after {
+    background-color: #f6a733;
+    content: "";
+    height: 2px;
+    left: 0;
+    margin-top: -1px;
+    bottom: 0;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    transition: width .25s;
+    width: 100%;
+}
+
+.custom-scrollbar {
+    scrollbar-width: auto;
+}
+.custom-scrollbar::-webkit-scrollbar{
+    width: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: white;
+    
+
+}
+
+/*.show-scrollbar {*/
+/*    scrollbar-width: auto;*/
+/*}*/
+/*.show-scrollbar::-webkit-scrollbar{*/
+/*    width: 5px;*/
+/*}*/
+.show-scrollbar::-webkit-scrollbar-thumb {
+    background-color:  black;
+    height: 10px;
+}

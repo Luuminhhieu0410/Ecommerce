@@ -1,14 +1,15 @@
 import {Carousel} from "antd";
 import {DoubleLeftOutlined, DoubleRightOutlined} from "@ant-design/icons";
 import {useRef, useState} from "react";
-import BannerSkeleton from "../skeletons/BannerSkeleton.tsx";
+
 import BannerImage from "./BannerImage.tsx";
 
 const Banner = () => {
     const carouselRef = useRef(null);
     return (
-        <div className="relative w-full cursor-pointer">
-            <Carousel ref={carouselRef} className="!w-full !h-full " autoplay={true} autoplaySpeed={2000} draggabl={true}>
+        <div className="relative w-full cursor-pointer h-auto">
+            <Carousel ref={carouselRef} className="!w-full h-auto " autoplay={true} autoplaySpeed={2000}
+                      draggable={true}>
                 <BannerImage
                     src={"https://1557691689.e.cdneverest.net/fast/0x0/filters:format(webp)/static.5sfashion.vn/storage/home/slider/7TZaCDNECTYPwCqv7aqWaiLvuEuDJ9z7.jpg"}
                 />

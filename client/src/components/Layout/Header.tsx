@@ -2,13 +2,17 @@ import Navbar from "./Navbar";
 import {Link} from "react-router-dom";
 import logo from '../../assets/images/logo.png';
 import {SearchOutlined} from '@ant-design/icons';
-import {Input} from 'antd';
+import SideBar from "./SideBar.tsx";
+import {useState} from "react";
+
 
 const Header = () => {
+    const [isOpenSidebar , setIsOpenSidebar] =  useState<boolean>(false);
     return (
         // <div className="flex justify-center items-center px-[12px]" style={{background: "#fafafa"}}>
         <div className="container mx-auto flex items-center h-[74px]">
-            <div className="header-menu lg:hidden flex-1/3 ml-2"> {/*button sidebar */}
+            {/*button open sidebar */}
+            <div onClick={() => {setIsOpenSidebar(true)}} className="header-menu lg:hidden flex-1/3 ml-2"> {/*button open sidebar */}
                 <div className="icon-menu">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <path
@@ -24,7 +28,8 @@ const Header = () => {
             <Navbar/>
 
             <div className="flex flex-2/6 items-center justify-around ">
-                <div className=" h-full hidden lg:flex lg:flex-4/5 border rounded-lg border-solid border-[#d9d9d9] "> {/* khung search */}
+                <div
+                    className=" h-full hidden lg:flex lg:flex-4/5 border rounded-lg border-solid border-[#d9d9d9] "> {/* khung search */}
                     <div className=" mx-2 w-[10%] flex justify-center items-center">
                         <SearchOutlined
                             style={{color: "grey", fontSize: "18px"}}/>
@@ -66,6 +71,8 @@ const Header = () => {
                     </div>
                 </div>
             </div>
+            <SideBar isOpenSidebar={isOpenSidebar} setIsOpenSidebar={setIsOpenSidebar}/>
+
         </div>
         // </div>
     );
