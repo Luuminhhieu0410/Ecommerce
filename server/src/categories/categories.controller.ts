@@ -8,9 +8,9 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Get()
-  async findAll(): Promise<ConvertCategory[] | null> {
+  async findAll(): Promise<ConvertCategory[] | []> {
     const categories = await this.categoriesService.findAll();
-    if (categories == null) return null;
+    if (categories == null) return [];
     const newCategories: ConvertCategory[] = convert(categories);
     return newCategories;
   }

@@ -17,7 +17,7 @@ export class CategoriesService {
       });
     } catch (error) {
       console.log('DB Error: ' + error);
-      return null;
+      return [];
     }
   }
 }
