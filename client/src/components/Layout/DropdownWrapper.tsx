@@ -1,16 +1,10 @@
 import React from 'react';
-import {Dropdown, type MenuProps} from "antd";
 
-type Props = {
-    children: React.ReactNode,
-    dropDownData: MenuProps['items'],
-}
-const DropDownNavItem = ({children, dropDownData}: Props) => {
-    return (
-        <Dropdown menu={{items: dropDownData}}>
-            {children}
-        </Dropdown>
-    );
+
+const DropdownWrapper = () => {
+    return (<div>
+
+    </div>);
 };
 
-export default DropDownNavItem;
+export default DropdownWrapper;

@@ -1,23 +1,25 @@
-import React , {useState, useEffect, useMemo, useRef} from "react";
+import React, {useState, useEffect, useMemo, useRef} from "react";
 import type {CategoryApi} from "../../types/CategoryApi";
-import {ServerUrl} from "../../server";
 import type {MenuProps} from 'antd';
 import {Menu} from 'antd';
 import {Link} from "react-router-dom";
 import {CloseOutlined, MinusOutlined, PlusOutlined} from "@ant-design/icons";
 import './SideBar.css';
+import type {CollectionApi} from "../../types/CollectionApi.ts";
 
 type MenuItem = Required<MenuProps>['items'][number];
 type OpenStateProps = {
     isOpenSidebar: boolean,
     setIsOpenSidebar: React.Dispatch<React.SetStateAction<boolean>>;
+    categories: CategoryApi[];
+    collections: CollectionApi[];
 }
-const SideBar = ({isOpenSidebar, setIsOpenSidebar}: OpenStateProps) => {
-    const [categories, setCategories] = useState<CategoryApi[]>([]);
+const SideBar = ({isOpenSidebar, setIsOpenSidebar, categories, collections}: OpenStateProps) => {
     const [openKeys, setOpenKeys] = useState([]);
     const sideBarRef = useRef<HTMLDivElement>(null);
+    console.log(categories);
     const items: MenuItem[] = useMemo(() => {
-        return categories.map((category, key0) => ({
+        return [...categories.map((category, key0) => ({
             key: String(key0),
             label: <Link className="!text-[#333] text-base font-normal"
                          to={`/danh-muc/${category.slug}`}>{category.name}</Link>,
@@ -31,7 +33,16 @@ const SideBar = ({isOpenSidebar, setIsOpenSidebar}: OpenStateProps) => {
 
                 }))
             }))
-        }));
+        })), {
+            key: "abc", label: <Link className="!text-[#333] text-base font-normal"
+                                     to={`/bo-suu-tap`}>Bộ Sưu Tập</Link>,
+              children: collections.length == 0 ? null : collections.map((collection, key) => {
+                return {
+                    key: key,
+                    label: <Link to={`/bo-suu-tap/${collection.slug}`}>{collection.name}</Link>
+                }
+            })
+        }];
     }, [categories]);
 
     const scrollTimeoutRef = useRef<number>(0)
@@ -71,13 +82,7 @@ const SideBar = ({isOpenSidebar, setIsOpenSidebar}: OpenStateProps) => {
     //     console.log('click ', e);
     //     setCurrent(e.key);
     // };
-    useEffect(() => {
-        fetch(`${ServerUrl}/categories`)
-            .then((data) => data.json())
-            .then((data) => {
-                setCategories(data);
-            });
-    }, []);
+
 
     return (
         <div className="relative">
@@ -121,7 +126,9 @@ const SideBar = ({isOpenSidebar, setIsOpenSidebar}: OpenStateProps) => {
             {isOpenSidebar && (
                 <div
                     className="close-overlay fixed top-0 left-0 w-screen h-screen bg-[rgba(0,0,0,.7)] z-[999]"
-                    onClick={() => {setIsOpenSidebar(false)}}
+                    onClick={() => {
+                        setIsOpenSidebar(false)
+                    }}
                 />
             )}
         </div>

@@ -3,16 +3,53 @@ import {Link} from "react-router-dom";
 import logo from '../../assets/images/logo.png';
 import {SearchOutlined} from '@ant-design/icons';
 import SideBar from "./SideBar.tsx";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {Dropdown, type MenuProps,} from "antd";
+import type {CategoryApi} from "../../types/CategoryApi.ts";
+import {ServerUrl} from "../../server.ts";
+import type {CollectionApi} from "../../types/CollectionApi.ts";
+
+const dropDownIconUser: MenuProps['items'] = [
+    {
+        key: '1',
+        label: (
+            <Link to={'/login'}>
+                Đăng nhập
+            </Link>
+        ),
+    },
+    {
+        key: '2',
+        label: (
+            <Link to={'/login'}>
+                Đăng ký
+            </Link>
+        ),
+    },
+
+];
 
 
 const Header = () => {
-    const [isOpenSidebar , setIsOpenSidebar] =  useState<boolean>(false);
+    const [isOpenSidebar, setIsOpenSidebar] = useState<boolean>(false);
+    const [categories, setCategories] = useState<CategoryApi[]>([]);
+    const [collections, setCollections] = useState<CollectionApi[]>([]);
+    useEffect(() => {
+        Promise.all([
+            fetch(`${ServerUrl}/categories`).then(res => res.json()),
+            fetch(`${ServerUrl}/collections`).then(res => res.json())
+        ]).then(([dataCategories, dataCollections]) => {
+            setCategories(dataCategories);
+            setCollections(dataCollections);
+        });
+    }, []);
     return (
         // <div className="flex justify-center items-center px-[12px]" style={{background: "#fafafa"}}>
         <div className="container mx-auto flex items-center h-[74px]">
             {/*button open sidebar */}
-            <div onClick={() => {setIsOpenSidebar(true)}} className="header-menu lg:hidden flex-1/3 ml-2"> {/*button open sidebar */}
+            <div onClick={() => {
+                setIsOpenSidebar(true)
+            }} className="header-menu lg:hidden flex-1/3 ml-2"> {/*button open sidebar */}
                 <div className="icon-menu">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <path
@@ -25,7 +62,7 @@ const Header = () => {
                 <img src={logo} alt="Logo"/>
             </Link>
 
-            <Navbar/>
+            <Navbar categories={categories} collections={collections}/>
 
             <div className="flex flex-2/6 items-center justify-around ">
                 <div
@@ -38,20 +75,24 @@ const Header = () => {
                            className="h-[40px] w-full focus:outline-none placeholder:text-sm"/>
                 </div>
                 <div className=" action-header flex flex-1 lg:flex-1/5 items-center justify-end lg:pr-3">
-                    <div className="account-header mr-2 ">
-                        <div className="account-icon">
-                            <svg width="16" height="20" viewBox="0 0 16 20" fill="none"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M7.99676 13.1748C3.68376 13.1748 -0.000244141 13.8548 -0.000244141 16.5748C-0.000244141 19.2958 3.66076 19.9998 7.99676 19.9998C12.3098 19.9998 15.9938 19.3208 15.9938 16.5998C15.9938 13.8788 12.3338 13.1748 7.99676 13.1748"
-                                    fill="#0F0F0F"></path>
-                                <path
-                                    d="M7.99683 10.584C10.9348 10.584 13.2888 8.229 13.2888 5.292C13.2888 2.355 10.9348 0 7.99683 0C5.05983 0 2.70483 2.355 2.70483 5.292C2.70483 8.229 5.05983 10.584 7.99683 10.584"
-                                    fill="#0F0F0F"></path>
-                            </svg>
+
+                    <Dropdown menu={{items: dropDownIconUser}} placement="bottom">
+                        <div className="account-header mr-2 py-2"> {/* icon user */}
+                            <div className="account-icon">
+                                <svg width="16" height="20" viewBox="0 0 16 20" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M7.99676 13.1748C3.68376 13.1748 -0.000244141 13.8548 -0.000244141 16.5748C-0.000244141 19.2958 3.66076 19.9998 7.99676 19.9998C12.3098 19.9998 15.9938 19.3208 15.9938 16.5998C15.9938 13.8788 12.3338 13.1748 7.99676 13.1748"
+                                        fill="#0F0F0F"></path>
+                                    <path
+                                        d="M7.99683 10.584C10.9348 10.584 13.2888 8.229 13.2888 5.292C13.2888 2.355 10.9348 0 7.99683 0C5.05983 0 2.70483 2.355 2.70483 5.292C2.70483 8.229 5.05983 10.584 7.99683 10.584"
+                                        fill="#0F0F0F"></path>
+                                </svg>
+                            </div>
                         </div>
-                    </div>
-                    <div className="cart-header mr-2 lg:mr-0">
+                    </Dropdown>
+
+                    <div className="cart-header mr-2 lg:mr-0"> {/* icon cart */}
                         <a href="#">
                             <div className="cart-info">
                                 <div className="cart-icon">
@@ -71,11 +112,13 @@ const Header = () => {
                     </div>
                 </div>
             </div>
-            <SideBar isOpenSidebar={isOpenSidebar} setIsOpenSidebar={setIsOpenSidebar}/>
+            <SideBar isOpenSidebar={isOpenSidebar} setIsOpenSidebar={setIsOpenSidebar} categories={categories}
+                     collections={collections}/>
 
         </div>
         // </div>
     );
 };
+
 
 export default Header;
