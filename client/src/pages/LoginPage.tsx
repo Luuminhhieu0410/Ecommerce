@@ -1,8 +1,12 @@
 import LoginForm from '../components/Login/LoginForm';
+import {useNavigation} from "react-router-dom";
+
 const LoginPage = () => {
+    const navigation = useNavigation();
+
     return (
         <div>
-            <LoginForm />
+            {navigation.state === "loading" ? <div>loading</div> : <LoginForm /> }
         </div>
     );
 };

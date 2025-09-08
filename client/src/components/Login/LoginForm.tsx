@@ -1,5 +1,12 @@
 import {initializeApp} from "firebase/app";
 import {getAuth, GoogleAuthProvider, signInWithPopup} from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+import {Link} from "react-router-dom";
+import {ServerUrl} from "../../server";
+import {useState} from "react";
+
+import { useUserStore } from '../../stores/UserStore';
+import type { UserLoginApi } from "../../types/LoginApi";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBxwnfwnm7q9hpNHxAkNWpyQ0537U0waZc",
@@ -12,21 +19,21 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+initializeApp(firebaseConfig);
 const auth = getAuth();
 const provider = new GoogleAuthProvider();
-import {Link} from "react-router-dom";
-import {ServerUrl} from "../../server";
-import {useRef, useState} from "react";
-import type {LoginApi} from "../../types/LoginApi.ts";
+
 
 const LoginForm = () => {
-    const buttonLoginGoogle = useRef();
+    const navigate = useNavigate();
+    const {setUser} =  useUserStore();
+    
     const [messageApi, setMessageApi] = useState<string>('');
+    const [isLogin , setIsLogin] = useState<boolean>(false);
     const handleLoginGoogle = async () => {
         try {
             // console.log("Login");
-            buttonLoginGoogle.current.disabled = true;
+            setIsLogin(true);
 
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
@@ -36,21 +43,26 @@ const LoginForm = () => {
             if (!res.ok) {
                 const dataFail = await res.json();
                 setMessageApi(dataFail.message);
+                return;
             }
+            const dataApi : UserLoginApi = await res.json();
+            setUser(dataApi);
+            return navigate('/');
+            // console.log(await res.json());
 
         } catch (error: any) {
             if (error.code === "auth/popup-closed-by-user") {
                 // console.log("Người dùng đã đóng popup đăng nhập.");
-                buttonLoginGoogle.current.disabled = false;
+                setIsLogin(false);
             } else if (error.code === "auth/cancelled-popup-request") {
                 // console.log("Popup bị hủy do có một yêu cầu khác.");
-                buttonLoginGoogle.current.disabled = false;
+                setIsLogin(false);
             } else {
                 // console.error("Lỗi khác:", error);
-                buttonLoginGoogle.current.disabled = false;
+                setIsLogin(false);
             }
         } finally {
-            buttonLoginGoogle.current.disabled = false;
+            setIsLogin(false);
         }
     };
 
@@ -83,17 +95,16 @@ const LoginForm = () => {
                 </Link>
                 <div
                     className="flex flex-col md:mt-[70px] w-[350px] max-w-[450px] mx-auto md:max-w-[450px]  lg:max-w-[450px]">
-                    <p className="text-[32px] font-bold text-zinc-950 dark:text-white">
-                        Sign In
+                    <p className="text-[32px] text-center  font-bold text-zinc-950 dark:text-white">
+                        Đăng Nhập
                     </p>
                     {/*<p className="mb-2.5 mt-2.5 font-normal text-zinc-950 dark:text-zinc-400">*/}
                     {/*    Enter your email and password to sign in!*/}
                     {/*</p>*/}
-                    <div style={{color: "red"}}>{messageApi}</div>
                     <div className="mt-8">
                         <div className="pb-2">
                             <input type="hidden" name="provider" value="google"/>
-                            <button ref={buttonLoginGoogle}
+                            <button disabled={isLogin}
                                     className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 w-full text-zinc-950 py-6 dark:text-white"
                                     onClick={handleLoginGoogle}
                             >
@@ -136,7 +147,7 @@ c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.
                     ></path>
                   </svg>
                 </span>
-                                <span>Google</span>
+                                <span className="font-semibold">Tiếp tục với Google</span>
                             </button>
                         </div>
                     </div>
@@ -147,7 +158,8 @@ c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.
                         </div>
                     </div>
                     <div>
-                        <form noValidate="" className="mb-4">
+                        <form className="mb-4">
+
                             <div className="grid gap-2">
                                 <div className="grid gap-1">
                                     <label
@@ -156,6 +168,7 @@ c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.
                                     >
                                         Email
                                     </label>
+
                                     <input
                                         className="mr-2.5 mb-2 h-full min-h-[44px] w-full rounded-lg border border-zinc-200 bg-white px-4 py-3 text-sm font-medium text-zinc-950 placeholder:text-zinc-400 focus:outline-0 dark:border-zinc-800 dark:bg-transparent dark:text-white dark:placeholder:text-zinc-400"
                                         id="email"
@@ -166,6 +179,8 @@ c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.
                                         autoCorrect="off"
                                         name="email"
                                     />
+                                    <div style={{height: "40px", color: "red", paddingTop: "15px"}}>{messageApi}</div>
+
                                     {/*<label*/}
                                     {/*className="text-zinc-950 mt-2 dark:text-white"*/}
                                     {/*htmlFor="password">Password</label>*/}
@@ -179,7 +194,7 @@ c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.
                                     className="whitespace-nowrap bg-[#000000] text-white hover:bg-[rgb(127,127,127)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 mt-2 flex h-[unset] w-full items-center justify-center rounded-lg px-4 py-4 text-sm font-medium"
                                     type="submit"
                                 >
-                                    Sign in
+                                    Đăng Nhập
                                 </button>
                             </div>
                         </form>
@@ -191,7 +206,7 @@ c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.
                                 to="#"
                                 className="font-medium text-zinc-950 dark:text-white text-sm"
                             >
-                                Don't have an account? <span style={{borderBottom: "solid 1px black", color: "blue"}}>Sign up</span>
+                                Chưa có tài khoản? <span style={{borderBottom: "solid 1px black", color: "blue"}}>Đăng ký</span>
                             </Link>
                         </p>
                     </div>

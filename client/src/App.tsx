@@ -1,14 +1,12 @@
-import {BrowserRouter, Route, Routes} from "react-router-dom";
-import {LoginPage, HomePage} from "./routes/ShopRoute.ts";
-
+import { Suspense } from "react";
+import routes from "./routes/AllRoutes";
+import {RouterProvider} from "react-router-dom";
+import PageLoading from "./components/loading/PageLoading"
 function App() {
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<HomePage/>}/>
-                <Route path="/login" element={<LoginPage/>}/>
-            </Routes>
-        </BrowserRouter>
+        <Suspense fallback={<PageLoading />}>
+            <RouterProvider router={routes}/>
+        </Suspense>
     );
 }
 

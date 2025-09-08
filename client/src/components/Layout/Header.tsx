@@ -8,6 +8,7 @@ import {Dropdown, type MenuProps,} from "antd";
 import type {CategoryApi} from "../../types/CategoryApi.ts";
 import {ServerUrl} from "../../server.ts";
 import type {CollectionApi} from "../../types/CollectionApi.ts";
+import { useUserStore } from "../../stores/UserStore.tsx";
 
 const dropDownIconUser_notLoggedIn: MenuProps['items'] = [
     {
@@ -50,6 +51,8 @@ const dropDownIconUser_LoggedIn: MenuProps['items'] = [
 
 
     const Header = () => {
+        const {isAuthenticated} = useUserStore();
+        
         const [isOpenSidebar, setIsOpenSidebar] = useState<boolean>(false);
         const [categories, setCategories] = useState<CategoryApi[]>([]);
         const [collections, setCollections] = useState<CollectionApi[]>([]);
@@ -95,7 +98,7 @@ const dropDownIconUser_LoggedIn: MenuProps['items'] = [
                     </div>
                     <div className=" action-header flex flex-1 lg:flex-1/5 items-center justify-end lg:pr-3">
 
-                        <Dropdown menu={{items: dropDownIconUser_notLoggedIn}} placement="bottom">
+                        <Dropdown menu={{items: isAuthenticated ? dropDownIconUser_LoggedIn : dropDownIconUser_notLoggedIn}} placement="bottom">
                             <div className="account-header mr-2 py-2"> {/* icon user */}
                                 <div className="account-icon">
                                     <svg width="16" height="20" viewBox="0 0 16 20" fill="none"
