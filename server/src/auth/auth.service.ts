@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { jwtPayload } from 'src/types/jwtpayload.type';
+// import { jwtPayload } from 'src/types/jwtpayload.type';
 import { UsersService } from '../admin/users/users.service';
 import { users } from 'generated/prisma';
 import { jwtConstants } from './auth.constant';
@@ -23,13 +23,9 @@ export class AuthService {
     const data: users | null = await this.usersService.findUserByEmail(email);
     console.log('query result' + JSON.stringify(data));
 
-    if (data == null)
+    if (data == null || data?.full_name == null)
       throw new UnauthorizedException('Email chưa được đăng kí');
-    const payload: jwtPayload = {
-      id: data.id,
-      email: data.email,
-      name: data.full_name,
-    };
+    const payload: users = data;
     return {
       data,
       access_token: await this.jwtService.signAsync(payload, {

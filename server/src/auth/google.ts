@@ -1,5 +1,3 @@
-import { config } from 'dotenv';
-config();
 export const serviceAccount = {
   type: 'service_account',
   project_id: process.env.project_id,

@@ -7,8 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from './auth.constant';
 import { Request } from 'express';
-import { jwtPayload } from 'src/types/jwtpayload.type';
-
+import { users } from 'generated/prisma';
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(private jwtService: JwtService) {}
@@ -20,7 +19,7 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
     try {
-      const payload: jwtPayload = await this.jwtService.verifyAsync(token, {
+      const payload: users = await this.jwtService.verifyAsync(token, {
         secret: jwtConstants.access_token_secret,
       });
       request['user'] = payload;
