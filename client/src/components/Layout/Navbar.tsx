@@ -2,13 +2,15 @@ import {Link} from "react-router-dom";
 import type {CategoryApi} from "../../types/CategoryApi";
 import type {CollectionApi} from "../../types/CollectionApi";
 import {styles} from '../../styles/style'
+import NavbarSkeleton from "../skeletons/NavbarSkeleton";
 
 type Props = {
+    isLoadingNavbar: boolean
     categories: CategoryApi[];
     collections: CollectionApi[];
 };
 
-const Navbar = ({categories, collections}: Props) => {
+const Navbar = ({categories, collections, isLoadingNavbar}: Props) => {
     return (
         <div className="lg:flex-4/6 hidden lg:block h-full">
             <ul className="flex justify-around items-center text-base h-full">
@@ -18,7 +20,7 @@ const Navbar = ({categories, collections}: Props) => {
                         className={`relative group flex-1/6 h-full ${styles.flex_items_center}`}
                     >
                         <Link to={`/danh-muc/${cat.slug}`} className="">
-                            {cat.name}
+                            {isLoadingNavbar ? <NavbarSkeleton /> : cat.name }
                         </Link>
 
                         {/* Mega Menu */}
@@ -70,7 +72,7 @@ const Navbar = ({categories, collections}: Props) => {
                 {/* Bộ sưu tập */}
                 <li className={` flex-1/6 h-full ${styles.flex_items_center} relative group text-center `}>
                     <Link to="/bo-suu-tap" className="">
-                        Bộ sưu tập
+                        {isLoadingNavbar ? "" : "Bộ sưu tập"  }
                     </Link>
                     {/* Dropdown */}
                     {collections.length > 0 && (
@@ -94,7 +96,8 @@ const Navbar = ({categories, collections}: Props) => {
 
                 <li className={`flex-1/6 ${styles.flex_items_center}`}>
                     <Link to="/ve-chung-toi" className="">
-                        Về chúng tôi
+                        {isLoadingNavbar ? "" : "Về chúng tôi"}
+                        
                     </Link>
                 </li>
             </ul>

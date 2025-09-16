@@ -52,7 +52,7 @@ const dropDownIconUser_LoggedIn: MenuProps['items'] = [
 
     const Header = () => {
         const {isAuthenticated} = useUserStore();
-        
+        const [isLoadingNavbar , setIsLoadingNavbar] = useState<boolean>(true);
         const [isOpenSidebar, setIsOpenSidebar] = useState<boolean>(false);
         const [categories, setCategories] = useState<CategoryApi[]>([]);
         const [collections, setCollections] = useState<CollectionApi[]>([]);
@@ -61,8 +61,9 @@ const dropDownIconUser_LoggedIn: MenuProps['items'] = [
                 fetch(`${ServerUrl}/categories`).then(res => res.json()),
                 fetch(`${ServerUrl}/collections`).then(res => res.json())
             ]).then(([dataCategories, dataCollections]) => {
+                setTimeout(() => setIsLoadingNavbar(false) , 2000)
                 setCategories(dataCategories);
-                setCollections(dataCollections);
+                setCollections(dataCollections);    
             });
         }, []);
         return (
@@ -84,7 +85,7 @@ const dropDownIconUser_LoggedIn: MenuProps['items'] = [
                     <img src={logo} alt="Logo"/>
                 </Link>
 
-                <Navbar categories={categories} collections={collections}/>
+                <Navbar isLoadingNavbar={isLoadingNavbar} categories={categories} collections={collections}/>
 
                 <div className="flex flex-2/6 items-center justify-around ">
                     <div
@@ -134,7 +135,8 @@ const dropDownIconUser_LoggedIn: MenuProps['items'] = [
                         </div>
                     </div>
                 </div>
-                <SideBar isOpenSidebar={isOpenSidebar} setIsOpenSidebar={setIsOpenSidebar} categories={categories}
+                {/* side bar ẩn khi responsive mobile */}
+                <SideBar isOpenSidebar={isOpenSidebar} setIsOpenSidebar={setIsOpenSidebar}  categories={categories}
                          collections={collections}/>
 
             </div>
