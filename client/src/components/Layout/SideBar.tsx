@@ -1,11 +1,11 @@
 import React, {useState, useEffect, useMemo, useRef} from "react";
-import type {CategoryApi} from "../../types/CategoryApi";
+import type {CategoryApi} from "@/types/CategoryApi";
 import type {MenuProps} from 'antd';
 import {Menu} from 'antd';
 import {Link} from "react-router-dom";
 import {CloseOutlined, MinusOutlined, PlusOutlined} from "@ant-design/icons";
 import './SideBar.css';
-import type {CollectionApi} from "../../types/CollectionApi.ts";
+import type {CollectionApi} from "@/types/CollectionApi.ts";
 
 type MenuItem = Required<MenuProps>['items'][number];
 type OpenStateProps = {

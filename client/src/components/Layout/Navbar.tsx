@@ -1,8 +1,8 @@
 import {Link} from "react-router-dom";
-import type {CategoryApi} from "../../types/CategoryApi";
-import type {CollectionApi} from "../../types/CollectionApi";
-import {styles} from '../../styles/style'
-import NavbarSkeleton from "../skeletons/NavbarSkeleton";
+import type {CategoryApi} from "@/types/CategoryApi";
+import type {CollectionApi} from "@/types/CollectionApi";
+import {styles} from '@/styles/style'
+import NavbarSkeleton from "../Skeletons/NavbarSkeleton";
 
 type Props = {
     isLoadingNavbar: boolean

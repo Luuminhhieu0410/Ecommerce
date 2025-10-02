@@ -1,4 +1,4 @@
-import BannerSkeleton from "../skeletons/BannerSkeleton.tsx";
+import BannerSkeleton from "../Skeletons/BannerSkeleton.tsx";
 import {useState} from "react";
 
 

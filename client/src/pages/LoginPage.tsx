@@ -6,7 +6,7 @@ const LoginPage = () => {
 
     return (
         <div>
-            {navigation.state === "loading" ? <div>loading</div> : <LoginForm /> }
+            {navigation.state === "loading" ? <div>loading</div> : <LoginForm /> }  {/* test  */}
         </div>
     );
 };

@@ -1,14 +1,14 @@
 import Navbar from "./Navbar";
 import {Link} from "react-router-dom";
-import logo from '../../assets/images/logo.png';
+import logo from '@/assets/images/logo.png';
 import {SearchOutlined} from '@ant-design/icons';
 import SideBar from "./SideBar.tsx";
 import {useEffect, useState} from "react";
 import {Dropdown, type MenuProps,} from "antd";
-import type {CategoryApi} from "../../types/CategoryApi.ts";
-import {ServerUrl} from "../../server.ts";
-import type {CollectionApi} from "../../types/CollectionApi.ts";
-import { useUserStore } from "../../stores/UserStore.tsx";
+import type {CategoryApi} from "@/types/CategoryApi.ts";
+import {ServerUrl} from "@/server.ts";
+import type {CollectionApi} from "@/types/CollectionApi.ts";
+import { useUserStore } from "@/stores/UserStore.tsx";
 
 const dropDownIconUser_notLoggedIn: MenuProps['items'] = [
     {

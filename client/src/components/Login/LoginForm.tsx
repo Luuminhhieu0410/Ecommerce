@@ -1,12 +1,12 @@
 import {initializeApp} from "firebase/app";
 import {getAuth, GoogleAuthProvider, signInWithPopup} from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {Link} from "react-router-dom";
-import {ServerUrl} from "../../server";
+import {ServerUrl} from "@/server";
 import {useState} from "react";
 
-import { useUserStore } from '../../stores/UserStore';
-import type { UserLoginApi } from "../../types/LoginApi";
+import { useUserStore } from '@/stores/UserStore';
+import type { UserLoginApi } from "@/types/LoginApi";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBxwnfwnm7q9hpNHxAkNWpyQ0537U0waZc",
@@ -27,14 +27,13 @@ const provider = new GoogleAuthProvider();
 const LoginForm = () => {
     const navigate = useNavigate();
     const {setUser} =  useUserStore();
-    
+    const [email , setEmail] = useState<string>('') // input email 
     const [messageApi, setMessageApi] = useState<string>('');
     const [isLogin , setIsLogin] = useState<boolean>(false);
     const handleLoginGoogle = async () => {
         try {
             // console.log("Login");
             setIsLogin(true);
-
             const result = await signInWithPopup(auth, provider);
             const user = result.user;
 
@@ -66,6 +65,11 @@ const LoginForm = () => {
         }
     };
 
+    const handleSubmitForm = async (e:React.FormEvent) => {
+        e.preventDefault();
+        navigate(`/login/otp?emailAuthInput=${email}`);
+
+    }
     return (
         <div className="flex flex-col justify-center items-center bg-white max-h-screen h-[100vh]">
             <div
@@ -89,7 +93,7 @@ const LoginForm = () => {
                                 d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"></path>
                         </svg>
                         <p className="ml-0 text-sm hover:text-red-500 text-zinc-950 dark:text-white">
-                            Back to the website
+                            Quay về trang chủ
                         </p>
                     </div>
                 </Link>
@@ -105,7 +109,7 @@ const LoginForm = () => {
                         <div className="pb-2">
                             <input type="hidden" name="provider" value="google"/>
                             <button disabled={isLogin}
-                                    className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 w-full text-zinc-950 py-6 dark:text-white"
+                                    className= {`${isLogin ? "cursor-not-allowed" : ""} inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 w-full text-zinc-950 py-6 dark:text-white `}
                                     onClick={handleLoginGoogle}
                             >
 
@@ -158,7 +162,7 @@ c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.
                         </div>
                     </div>
                     <div>
-                        <form className="mb-4">
+                        <form onSubmit={handleSubmitForm} className="mb-4">
 
                             <div className="grid gap-2">
                                 <div className="grid gap-1">
@@ -172,6 +176,8 @@ c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.
                                     <input
                                         className="mr-2.5 mb-2 h-full min-h-[44px] w-full rounded-lg border border-zinc-200 bg-white px-4 py-3 text-sm font-medium text-zinc-950 placeholder:text-zinc-400 focus:outline-0 dark:border-zinc-800 dark:bg-transparent dark:text-white dark:placeholder:text-zinc-400"
                                         id="email"
+                                        value={email}
+                                        onChange={(e) => {setEmail(e.target.value)}}
                                         placeholder="name@example.com"
                                         type="email"
                                         autoCapitalize="none"
