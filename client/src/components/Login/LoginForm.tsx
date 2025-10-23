@@ -151,7 +151,7 @@ c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.
                     ></path>
                   </svg>
                 </span>
-                                <span className="font-semibold">Tiếp tục với Google</span>
+                                <span className="font-semibold">{isLogin ? "Vui lòng chờ ..." : "Tiếp tục với Google"}</span>
                             </button>
                         </div>
                     </div>

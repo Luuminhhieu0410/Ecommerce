@@ -379,6 +379,25 @@ model collections {
   collection_products collection_products[]
 }
 
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model chat_rooms {
+  id              Int
+  name            String   @db.VarChar(100)
+  created_by_user Int
+  created_at      DateTime @default(now()) @db.Timestamp(0)
+
+  @@ignore
+}
+
+model otp_codes {
+  id         Int       @id @default(autoincrement())
+  email      String    @db.VarChar(255)
+  otp_code   String    @db.VarChar(10)
+  is_used    Boolean?  @default(false)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  expires_at DateTime  @db.Timestamp(0)
+}
+
 enum payments_payment_method {
   cod
   vnpay

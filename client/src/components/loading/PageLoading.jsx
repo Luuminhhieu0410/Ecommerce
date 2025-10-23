@@ -1,4 +1,4 @@
-import React from "react";
+
 const PageLoading = () => {
   return (
     <div className="fixed top-0 right-0 w-screen h-screen flex justify-center items-center">
