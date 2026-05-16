@@ -10,7 +10,7 @@ export class EmailService {
       this.resend = new Resend(process.env.RESEND_KEY);
       console.log(email);
       const { data, error } = await this.resend.emails.send({
-        from: 'mailer@resend.dev',
+        from: 'abc@resend.dev',
         to: email,
         subject: `${verifyCode} là mã xác thực của bạn`,
         html: `<!doctype html>

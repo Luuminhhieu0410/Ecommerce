@@ -4,12 +4,26 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 const VerifyEmaiPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [emailAuthInput,setEmailAuthInput] = useState<string | null >(null);
+  const [emailAuthInput, setEmailAuthInput] = useState<string | null>(null);
+  const initTimeDown = localStorage.getItem("time_down") || 0;
+  const [timeDown, setTimeDown] = useState<number>(3);
   console.log(emailAuthInput);
   useEffect(() => {
     setEmailAuthInput(searchParams.get("emailAuthInput"));
-    
   }, [searchParams]);
+
+  useEffect(() => {
+  const timer = setInterval(() => {
+    setTimeDown(prev => {
+      if (prev >= 1 ) return prev - 1;
+      clearInterval(timer); // dừng lại khi <= 1
+      return 0;
+    });
+  }, 1000);
+
+  return () => clearInterval(timer);
+}, []);
+
   return (
     <div id="root">
       <div data-overlay-container="true">
@@ -94,12 +108,19 @@ const VerifyEmaiPage = () => {
                         <div>
                           <div className="text-bodym flex items-center gap-1 mt-3">
                             Chưa nhận được mã xác thực?
-                            <button
-                              type="submit"
-                              className="cursor-pointer text-[#0284C5]"
-                            >
-                              Gửi lại
-                            </button>
+                            {timeDown == 0 ? (
+                              <button
+                                type="submit"
+                                className="cursor-pointer text-[#0284C5]"
+                              >
+                                Gửi lại
+                              </button>
+                            ) : (
+                              <span className="font-bold">
+                                Gửi lại sau 0:
+                                {timeDown.toString().padStart(2, "0")}
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>

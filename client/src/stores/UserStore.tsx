@@ -5,6 +5,8 @@ interface UserState extends User {
   token: string | null;
   isAuthenticated: boolean;
   loading: boolean;
+  setUser : (user: Partial<User>) => void;
+  clearUser : () => void;
 }
 
 export const useUserStore = create<UserState>((set) => ({
@@ -18,8 +20,8 @@ export const useUserStore = create<UserState>((set) => ({
   token: null,
   isAuthenticated: false,
   loading: false,
-  setUser: (user: User) => {
-    return set((state: UserState) => ({ ...state, ...user, isAuthenticated: true })) },
+  setUser: (user: Partial<User>) => {
+    set((state: UserState) => ({ ...state, ...user, isAuthenticated: true })) },
   clearUser: () =>
     set({
       id: null,
